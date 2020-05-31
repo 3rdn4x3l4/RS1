@@ -1,0 +1,17 @@
+#!/bin/bash
+
+SAVE="/var/tmp/savesum"
+FILE="/etc/crontab"
+HASH=$(sudo shasum $FILE)
+
+if [ ! -f $SAVE ]
+then
+		echo "$HASH" > $SAVE
+		exit 0;
+fi;
+
+if [ "$HASH" != "$(cat $SAVE)" ]
+then
+		echo "$HASH" > $SAVE
+		sendmail alex_lagache@hotmail.fr < mail.txt
+fi;

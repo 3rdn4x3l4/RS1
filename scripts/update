@@ -1,0 +1,19 @@
+#! /bin/bash
+clear
+echo -e "\e[31mupdating\e[0m"
+apt-get update > /var/log/update_script.log
+echo -e "\e[31mupgrading\e[0m"
+apt-get -y dist-upgrade >> /var/log/update_script.log
+echo -e "\e[31mcleaning\e[0m"
+apt-get clean >> /var/log/update_script.log
+apt-get autoclean >> /var/log/update_script.log
+echo -e "\e[31mremoving\e[0m"
+apt-get -y autoremove >> /var/log/update_script.log
+if [[ $1 = "log" ]]; then
+	echo -e "\e[31m|||LOG|||\e[0m"
+	cat /var/log/update_script.log
+	echo -e "\e[31m|||END OF LOG|||\e[0m"
+else
+	echo "logs in /var/log/update_script"
+fi
+date >> /var/log/update_script.log

@@ -1,0 +1,77 @@
+#!/bin/bash
+
+#first we need to know few things about the VM we manage:
+#-the name 
+#-the path to the VM
+#-the path to the ISO 
+#-the RAM
+#-the CPU cores
+#-the size
+
+clear
+ read -e -p "What name would you like to give to the new virtual machine?
+" VMNAME
+
+clear
+ read -e -p "Where should I place the new virtual machine?
+" VMPATH
+
+clear
+ read -e -p "Where should I search for the ISO to install the new virtual machine?
+" ISOPATH
+
+clear
+ read -e -p "How much RAM should the new virtual machine use(in Go)?
+" RAMSIZE
+RAMSIZE=$(($RAMSIZE * 1024))
+
+clear
+ read -e -p "How much CPU cores should the new virtual machine use?
+" CPUCORES
+
+clear
+ read -e -p "How much storage should the new virtual machine use(in Go)?
+" DISKSIZE
+DISKSIZE=$DISKSIZE"000000000"
+
+clear
+#create VM (name, OS_types, register in Vbox)
+VBoxManage createvm --name "$VMNAME" --ostype Debian_64 --register
+
+#modify RAM, CPU, VRAM, Network
+VBoxManage modifyvm "$VMNAME" --memory "$RAMSIZE"
+
+VBoxManage modifyvm "$VMNAME" --cpus "$CPUCORES"
+
+VBoxManage modifyvm "$VMNAME" --vram 64
+
+VBoxManage modifyvm "$VMNAME" --nic1 bridged --bridgeadapter1 en0
+
+#create, attach drives to VM
+VBoxManage createmedium disk --filename "$VMPATH/$VMNAME.vmdk" --sizebyte "$DISKSIZE" --format vmdk --variant fixed
+
+VBoxManage storagectl "$VMNAME" --name "Disk" --add sata --controller IntelAhci
+
+VBoxManage storageattach "$VMNAME" --storagectl "Disk" --port 0 --device 0 --type hdd --medium "$VMPATH/$VMNAME.vmdk"
+
+#command to create, attach the DVD
+VBoxManage storagectl "$VMNAME" --name "DVD" --add ide --controller PIIX4
+
+VBoxManage storageattach "$VMNAME" --storagectl "DVD" --port 1 --device 1 --type dvddrive --medium "$ISOPATH"
+
+read -r -p "Would you like to run the VM right now?
+		" RUN
+
+case $RUN in
+	[yY][eE][sS]|[yY])
+echo "Running VM"
+VBoxManage startvm $VMNAME
+;;
+	[nN][oO]|[nN])
+echo "you can now run the VM"
+;;
+*)
+echo "I didn't understand, you can run the VM by hand
+VBoxManage startvm $VMNAME"
+;;
+esac
