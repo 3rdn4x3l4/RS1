@@ -1,5 +1,9 @@
 # Roger-skyline-1
 
+## SCORE
+
+![FINAL SCORE](https://github.com/3rdn4x3l4/rs1/blob/master/score.png)
+
 ## VM
 
 ### VM creation
@@ -21,7 +25,7 @@ quotes for the name are not mandatory of course
 
 ### VM installation
 
-For this part I choose to use the automated install of my ISO. However I need to enter manually the information (ex: root assword, username, user password, partition sizes and mountpoints...)
+For this part I choose to use the automated install of my ISO. However I need to enter manually the information (ex: root password, username, user password, partition sizes and mountpoints...)
 
 ## SSH
 
@@ -82,7 +86,7 @@ root ALL=(ALL:ALL) ALL
 
 ### static IP
 
-To get a static IP we need to change the default settings of the network interface which is DHCP when installing the VM, the file is `/etc/network/interfaces`:
+To get a static IP we need to change the default settings of the network interface which uses DHCP when installing the VM, the file is `/etc/network/interfaces`:
 ```
 # The primary network interface
 allow-hotplug enp0s3
